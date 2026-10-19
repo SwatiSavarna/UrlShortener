@@ -1,0 +1,57 @@
+services:
+  url-shortener-app:
+    build: .
+    container_name: url-shortener-service
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/urlshortener
+      - SPRING_DATASOURCE_USERNAME=shortener
+      - SPRING_DATASOURCE_PASSWORD=shortener_secret
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - APP_BASE_URL=http://localhost:8080
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+
+  redis:
+    image: redis:7-alpine
+    container_name: url-shortener-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: url-shortener-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: urlshortener
+      POSTGRES_USER: shortener
+      POSTGRES_PASSWORD: shortener_secret
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shortener -d urlshortener"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  pg_data:
