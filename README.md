@@ -1,6 +1,6 @@
 # FlashLink | High-Throughput URL Shortener & Click Analytics
 
-A production-grade, distributed URL Shortener microservice built with **Spring Boot **, **Redis**, and **PostgreSQL / H2**, designed for low-latency redirects, high-concurrency read/write scaling, token-bucket rate limiting, and custom TTL link expiration.
+A production-grade, distributed URL Shortener microservice built with **Spring Boot**, **Redis**, and **PostgreSQL / H2**, designed for low-latency redirects, high-concurrency read/write scaling, token-bucket rate limiting, and custom TTL link expiration.
 
 ---
 
